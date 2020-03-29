@@ -13,7 +13,7 @@ import (
 var (
 
 	totalFollowers = prometheus.NewGaugeFunc(prometheus.GaugeOpts{
-		Namespace:   "user",
+		Namespace:   "twitter_user",
 		Name:        "followers_total",
 		ConstLabels: map[string]string{ "profile":"joe_mighty" },
 	}, func() float64 {
@@ -21,7 +21,7 @@ var (
 	})
 
 	totalFollowing = prometheus.NewGaugeFunc(prometheus.GaugeOpts{
-		Namespace:   "user",
+		Namespace:   "twitter_user",
 		Name:        "following_total",
 		ConstLabels: map[string]string{ "profile":"joe_mighty" },
 	}, func() float64 {
@@ -29,7 +29,7 @@ var (
 	})
 
 	totalTweets = prometheus.NewGaugeFunc(prometheus.GaugeOpts{
-		Namespace:   "user",
+		Namespace:   "twitter_user",
 		Name:        "tweets_total",
 		ConstLabels: map[string]string{ "profile":"joe_mighty" },
 	}, func() float64 {
@@ -41,8 +41,8 @@ var addr = flag.String("listen-address", ":8081", "The address to listen on for 
 
 var consumerKey = os.Getenv("TWITTER_CONSUMER_KEY")
 var consumerSecret = os.Getenv("TWITTER_CONSUMER_SECRET")
-var token = os.Getenv("TWITTER_TOKEN")
-var tokenSecret = os.Getenv("TWITTER_TOKEN_SECRET")
+var token = os.Getenv("TWITTER_ACCESS_TOKEN")
+var tokenSecret = os.Getenv("TWITTER_ACCESS_SECRET")
 
 var profile *TwitterProfile
 
