@@ -39,7 +39,7 @@ being used.
 A full sample of output can be found below.
 
 ```
-twitter_user_followers_total{profile="joe_mighty"} 1479
-twitter_user_following_total{profile="joe_mighty"} 639
-twitter_user_tweets_total{profile="joe_mighty"} 11561
+twitter_user_followers_total{profile="BillGates"} 1479
+twitter_user_following_total{profile="BillGates"} 639
+twitter_user_tweets_total{profile="BillGates"} 11561
 ```
