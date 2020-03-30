@@ -11,11 +11,21 @@ import (
 )
 
 var (
+	consumerKey = os.Getenv("TWITTER_CONSUMER_KEY")
+	consumerSecret = os.Getenv("TWITTER_CONSUMER_SECRET")
+	token = os.Getenv("TWITTER_ACCESS_TOKEN")
+	tokenSecret = os.Getenv("TWITTER_ACCESS_SECRET")
+
+	addr = flag.String("listen-address", ":8081", "The address to listen on for HTTP requests.")
+	user = flag.String("twitter.user", "", "Twitter account name")
+)
+
+var (
 
 	totalFollowers = prometheus.NewGaugeFunc(prometheus.GaugeOpts{
 		Namespace:   "twitter_user",
 		Name:        "followers_total",
-		ConstLabels: map[string]string{ "profile":"joe_mighty" },
+		ConstLabels: map[string]string{ "profile" : *user },
 	}, func() float64 {
 		return FollowerCount()
 	})
@@ -23,7 +33,7 @@ var (
 	totalFollowing = prometheus.NewGaugeFunc(prometheus.GaugeOpts{
 		Namespace:   "twitter_user",
 		Name:        "following_total",
-		ConstLabels: map[string]string{ "profile":"joe_mighty" },
+		ConstLabels: map[string]string{ "profile" : *user },
 	}, func() float64 {
 		return FollowingCount()
 	})
@@ -31,18 +41,11 @@ var (
 	totalTweets = prometheus.NewGaugeFunc(prometheus.GaugeOpts{
 		Namespace:   "twitter_user",
 		Name:        "tweets_total",
-		ConstLabels: map[string]string{ "profile":"joe_mighty" },
+		ConstLabels: map[string]string{ "profile" : *user },
 	}, func() float64 {
 		return TotalTweets()
 	})
 )
-
-var addr = flag.String("listen-address", ":8081", "The address to listen on for HTTP requests.")
-
-var consumerKey = os.Getenv("TWITTER_CONSUMER_KEY")
-var consumerSecret = os.Getenv("TWITTER_CONSUMER_SECRET")
-var token = os.Getenv("TWITTER_ACCESS_TOKEN")
-var tokenSecret = os.Getenv("TWITTER_ACCESS_SECRET")
 
 var profile *TwitterProfile
 
@@ -70,7 +73,7 @@ func main() {
 	config := oauth1.NewConfig(consumerKey, consumerSecret)
 	token := oauth1.NewToken(token, tokenSecret)
 
-	profile = NewProfile("joe_mighty", config.Client(oauth1.NoContext, token))
+	profile = NewProfile(*user, config.Client(oauth1.NoContext, token))
 
 	flag.Parse()
 	http.Handle("/metrics", promhttp.Handler())
