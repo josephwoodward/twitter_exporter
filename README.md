@@ -1,6 +1,6 @@
 # Twitter Prometheus Exporter
 
-Have you ever wanted to plot Twitter followers increasing or decreasing over time and see if they corrolate to a post or Tweet? I have, so I build this.
+Have you ever wanted to plot Twitter followers increasing or decreasing over time and see if they correlate to an event such as a blog post or Tweet? I have, so I build this.
 
 This Prometheus exporter will allow you to track and monitor user metrics such as follows/unfollows, tweets and more over time to give you an idea what content is increasing or decreasing your follower count.
 
