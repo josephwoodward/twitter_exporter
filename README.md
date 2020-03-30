@@ -17,10 +17,10 @@ export TWITTER_CONSUMER_KEY="..."
 export TWITTER_CONSUMER_SECRET="..."
 ```
 
-Then run the exporter.
+Then run the exporter, for instance:
 
 ```bashm
-twitter_prometheus_exporter -twitter.user ''
+twitter_prometheus_exporter -user=BillGates
 ```
 
 ## Exported metrics
