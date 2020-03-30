@@ -33,7 +33,6 @@ being used.
 |twitter_user_followers_total | The total number of followers the user has. |
 |twitter_user_following_total | The total number of users the user is following |
 |twitter_user_tweets_total | Total number of tweets |
-|
 
 A full sample of output can be found below.
 

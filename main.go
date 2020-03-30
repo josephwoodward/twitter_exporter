@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/dghubble/oauth1"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -17,7 +18,7 @@ var (
 	tokenSecret = os.Getenv("TWITTER_ACCESS_SECRET")
 
 	addr = flag.String("listen-address", ":8081", "The address to listen on for HTTP requests.")
-	user = flag.String("twitter.user", "", "Twitter account name")
+	user = flag.String("user", "", "Twitter account name")
 )
 
 var (
@@ -69,6 +70,11 @@ func TotalTweets() float64 {
 }
 
 func main() {
+
+	flag.Parse()
+
+	fmt.Printf("Looking up Twitter user '%s'\n", *user)
+	fmt.Printf("Metrics available on http://localhost%s/metrics\n", *addr)
 
 	config := oauth1.NewConfig(consumerKey, consumerSecret)
 	token := oauth1.NewToken(token, tokenSecret)
