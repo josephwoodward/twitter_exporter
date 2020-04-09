@@ -18,7 +18,7 @@ var (
 	tokenSecret = os.Getenv("TWITTER_ACCESS_SECRET")
 
 	addr = flag.String("listen-address", ":8081", "The address to listen on for HTTP requests.")
-	user = flag.String("user", "", "Twitter account name")
+	user = flag.String("user", "joe_mighty", "Twitter account name")
 )
 
 var (
@@ -46,6 +46,12 @@ var (
 	}, func() float64 {
 		return TotalTweets()
 	})
+
+	tweetsCount = prometheus.NewCounterVec(prometheus.CounterOpts{
+		Namespace:   "twitter_user",
+		Name:        "tweet_likes_total",
+		ConstLabels: map[string]string{ "profile" : *user },
+	}, []string{"id"})
 )
 
 var profile *TwitterProfile
@@ -54,6 +60,9 @@ func init() {
 	prometheus.Register(totalFollowers)
 	prometheus.Register(totalFollowing)
 	prometheus.Register(totalTweets)
+
+	prometheus.Register(tweetsCount)
+
 	prometheus.MustRegister(prometheus.NewBuildInfoCollector())
 }
 
@@ -69,6 +78,15 @@ func TotalTweets() float64 {
 	return profile.TotalTweetsCount()
 }
 
+func handler(w http.ResponseWriter, r *http.Request) {
+
+
+	//for _, v := range profile.Tweets() {
+	//	tweetsCount.WithLabelValues(v.IDStr).Add(float64(v.FavoriteCount))
+	//}
+
+}
+
 func main() {
 
 	flag.Parse()
@@ -81,8 +99,18 @@ func main() {
 
 	profile = NewProfile(*user, config.Client(oauth1.NoContext, token))
 
+
 	flag.Parse()
-	http.Handle("/metrics", promhttp.Handler())
-	log.Fatal(http.ListenAndServe(*addr, nil))
+	http.HandleFunc("/metrics", func(writer http.ResponseWriter, request *http.Request) {
+		promhttp.Handler()
+	})
+	//http.Handle("/metrics", promhttp.Handler())
+	//log.Fatal(http.ListenAndServe(":8081", nil))
+
+	//http.Handle("/metrics", promhttp.Handler())
+	s := &http.Server{Addr: ":8081"}
+	go func() {
+		log.Print(s.ListenAndServe())
+	}()
 
 }
