@@ -57,7 +57,7 @@ var (
 
 type Exporter struct {
 	likesCount map[string]int
-	tweets *prometheus.CounterVec
+	tweets *prometheus.GaugeVec
 }
 
 func (e Exporter) Describe(ch chan<- *prometheus.Desc) {
@@ -66,15 +66,7 @@ func (e Exporter) Describe(ch chan<- *prometheus.Desc) {
 
 func (e Exporter) Collect(ch chan<- prometheus.Metric) {
 	for _, v := range profile.Tweets() {
-		// Already counted
-		if val, ok := e.likesCount[v.IDStr]; ok {
-			diff := v.FavoriteCount - val
-			if diff > 0 {
-				e.tweets.WithLabelValues(v.IDStr).Add(float64(diff))
-			}
-		} else {
-			e.likesCount[v.IDStr] = v.FavoriteCount
-		}
+		e.tweets.WithLabelValues(v.IDStr).Set(float64(v.FavoriteCount))
 	}
 
 	e.tweets.Collect(ch)
@@ -88,7 +80,7 @@ func NewExporter() *Exporter {
 	// Count likes
 	for _, v := range profile.Tweets() {
 		e.likesCount[v.IDStr] = v.FavoriteCount
-		e.tweets.WithLabelValues(v.IDStr).Add(float64(v.FavoriteCount))
+		e.tweets.WithLabelValues(v.IDStr).Set(float64(v.FavoriteCount))
 	}
 
 	return &e
@@ -114,14 +106,6 @@ func FollowingCount() float64 {
 
 func TotalTweets() float64 {
 	return profile.TotalTweetsCount()
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-
-	for _, v := range profile.Tweets() {
-		tweetsCount.WithLabelValues(v.IDStr).Add(float64(v.FavoriteCount))
-	}
-
 }
 
 func main() {
