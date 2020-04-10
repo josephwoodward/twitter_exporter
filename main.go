@@ -47,12 +47,52 @@ var (
 		return TotalTweets()
 	})
 
-	tweetsCount = prometheus.NewCounterVec(prometheus.CounterOpts{
+	tweetsCount = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace:   "twitter_user",
 		Name:        "tweet_likes_total",
 		ConstLabels: map[string]string{ "profile" : *user },
 	}, []string{"id"})
 )
+
+
+type Exporter struct {
+	likesCount map[string]int
+	tweets *prometheus.CounterVec
+}
+
+func (e Exporter) Describe(ch chan<- *prometheus.Desc) {
+	e.tweets.Describe(ch)
+}
+
+func (e Exporter) Collect(ch chan<- prometheus.Metric) {
+	for _, v := range profile.Tweets() {
+		// Already counted
+		if val, ok := e.likesCount[v.IDStr]; ok {
+			diff := v.FavoriteCount - val
+			if diff > 0 {
+				e.tweets.WithLabelValues(v.IDStr).Add(float64(diff))
+			}
+		} else {
+			e.likesCount[v.IDStr] = v.FavoriteCount
+		}
+	}
+
+	e.tweets.Collect(ch)
+}
+
+func NewExporter() *Exporter {
+	e := Exporter{}
+	e.tweets = tweetsCount
+	e.likesCount = map[string]int{}
+
+	// Count likes
+	for _, v := range profile.Tweets() {
+		e.likesCount[v.IDStr] = v.FavoriteCount
+		e.tweets.WithLabelValues(v.IDStr).Add(float64(v.FavoriteCount))
+	}
+
+	return &e
+}
 
 var profile *TwitterProfile
 
@@ -60,8 +100,6 @@ func init() {
 	prometheus.Register(totalFollowers)
 	prometheus.Register(totalFollowing)
 	prometheus.Register(totalTweets)
-
-	prometheus.Register(tweetsCount)
 
 	prometheus.MustRegister(prometheus.NewBuildInfoCollector())
 }
@@ -80,10 +118,9 @@ func TotalTweets() float64 {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 
-
-	//for _, v := range profile.Tweets() {
-	//	tweetsCount.WithLabelValues(v.IDStr).Add(float64(v.FavoriteCount))
-	//}
+	for _, v := range profile.Tweets() {
+		tweetsCount.WithLabelValues(v.IDStr).Add(float64(v.FavoriteCount))
+	}
 
 }
 
@@ -99,18 +136,11 @@ func main() {
 
 	profile = NewProfile(*user, config.Client(oauth1.NoContext, token))
 
+	e := NewExporter()
+	prometheus.MustRegister(e)
 
 	flag.Parse()
-	http.HandleFunc("/metrics", func(writer http.ResponseWriter, request *http.Request) {
-		promhttp.Handler()
-	})
-	//http.Handle("/metrics", promhttp.Handler())
-	//log.Fatal(http.ListenAndServe(":8081", nil))
-
-	//http.Handle("/metrics", promhttp.Handler())
-	s := &http.Server{Addr: ":8081"}
-	go func() {
-		log.Print(s.ListenAndServe())
-	}()
+	http.Handle("/metrics", promhttp.Handler())
+	log.Fatal(http.ListenAndServe(":8081", nil))
 
 }
