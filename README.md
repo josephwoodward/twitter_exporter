@@ -1,6 +1,8 @@
 # Twitter Prometheus Exporter
 
-This Prometheus exporter will allow you to track and monitor key user metrics such as follows/unfollows, tweets and more.
+Have you ever wanted to plot Twitter followers increasing or decreasing over time and see if they correlate to an event such as a blog post or Tweet? I have, so I build this.
+
+This Prometheus exporter will allow you to track and monitor user metrics such as follows/unfollows, tweets and more over time to give you an idea what content is increasing or decreasing your follower count.
 
 ## Usage
 
@@ -17,10 +19,10 @@ export TWITTER_CONSUMER_KEY="..."
 export TWITTER_CONSUMER_SECRET="..."
 ```
 
-Then run the exporter.
+Then run the exporter, for instance:
 
 ```bashm
-twitter_prometheus_exporter -twitter.user ''
+twitter_prometheus_exporter -user=BillGates
 ```
 
 ## Exported metrics
@@ -37,7 +39,7 @@ being used.
 A full sample of output can be found below.
 
 ```
-twitter_user_followers_total{profile="joe_mighty"} 1479
-twitter_user_following_total{profile="joe_mighty"} 639
-twitter_user_tweets_total{profile="joe_mighty"} 11561
+twitter_user_followers_total{profile="BillGates"} 1479
+twitter_user_following_total{profile="BillGates"} 639
+twitter_user_tweets_total{profile="BillGates"} 11561
 ```
