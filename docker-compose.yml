@@ -4,9 +4,9 @@ services:
   twitterexporter:
     image: josephwoodward.azurecr.io/twitter_exporter:version1.0
     environment:
-      - TWITTER_CONSUMER_KEY=r5xo70gbST9QtsMMHMHQ1kVaL
-      - TWITTER_CONSUMER_SECRET=zKkLzRSG8bbLLh4kF3QkcB3neYNOsNBBGWDcQVhdJmfoc2HJh1
-      - TWITTER_ACCESS_TOKEN=273631940-iG62msvCVrnjcLqCnr5bFx1ZnxLtiKEovtJrCxA5
-      - TWITTER_ACCESS_SECRET=0VWO63UuczkGluWULFvmzCpDV9pfvSkwsjyz1HJHCVrcP
+      - TWITTER_CONSUMER_KEY=
+      - TWITTER_CONSUMER_SECRET=
+      - TWITTER_ACCESS_TOKEN=
+      - TWITTER_ACCESS_SECRET=
     ports:
       - "8081:8081"
