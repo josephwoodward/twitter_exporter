@@ -19,7 +19,7 @@ var (
 	accessSecret   = os.Getenv("TWITTER_ACCESS_SECRET")
 
 	addr = flag.String("listen-address", ":8081", "The address to listen on for HTTP requests.")
-	user = flag.String("user", "joe_mighty", "Twitter account name")
+	user = flag.String("user", "_josephwoodward", "Twitter account name")
 )
 
 var profile *exporter.TwitterProfile
@@ -38,7 +38,6 @@ func main() {
 	collector := exporter.NewCollector(profile)
 	prometheus.MustRegister(collector)
 
-	flag.Parse()
 	http.Handle("/metrics", promhttp.Handler())
 	log.Fatal(http.ListenAndServe(":8081", nil))
 }

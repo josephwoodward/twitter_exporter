@@ -1,10 +1,14 @@
 package exporter
 
 import (
-	"fmt"
 	"github.com/dghubble/go-twitter/twitter"
 	"net/http"
 )
+
+type TwitterProfile struct {
+	ScreenName string
+	client     twitter.Client
+}
 
 func NewProfile(twitterHandle string, client *http.Client) *TwitterProfile {
 	return &TwitterProfile{
@@ -13,63 +17,33 @@ func NewProfile(twitterHandle string, client *http.Client) *TwitterProfile {
 	}
 }
 
-type TwitterProfile struct {
-	ScreenName string
-	client     twitter.Client
-}
-
-func (p *TwitterProfile) Followers() float64 {
-	user, _, err := p.client.Users.Show(&twitter.UserShowParams{
-		ScreenName: p.ScreenName,
-	})
-
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-
-	return float64(user.FollowersCount)
-}
-
-func (p *TwitterProfile) TotalTweetsCount() float64 {
-	user, _, err := p.client.Users.Show(&twitter.UserShowParams{
-		ScreenName: p.ScreenName,
-	})
-
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-
-	return float64(user.StatusesCount)
-}
-
-func (p *TwitterProfile) Tweets() []twitter.Tweet {
-	enabled := true
-	disabled := false
+func (p *TwitterProfile) totalLikes() (int, error) {
+	yes := true
+	no := false
 
 	tweets, _, err := p.client.Timelines.UserTimeline(&twitter.UserTimelineParams{
 		ScreenName:      p.ScreenName,
-		Count:           20,
-		ExcludeReplies:  &enabled,
-		IncludeRetweets: &disabled,
+		Count:           100,
+		ExcludeReplies:  &yes,
+		IncludeRetweets: &no,
 	})
 
 	if err != nil {
-		fmt.Println(err)
+		return -1, nil
 	}
 
-	return tweets
+	var totalLikes int
+	for _, v := range tweets {
+		totalLikes += v.FavoriteCount
+	}
+
+	return totalLikes, nil
 }
 
-func (p *TwitterProfile) Following() float64 {
-
-	//user, _, err := p.client.Timelines.MentionTimeline(&twitter.MentionTimelineParams{})
+func (p *TwitterProfile) FetchUser() (*twitter.User, error) {
 	user, _, err := p.client.Users.Show(&twitter.UserShowParams{
 		ScreenName: p.ScreenName,
 	})
 
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-
-	return float64(user.FriendsCount)
+	return user, err
 }

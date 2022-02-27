@@ -7,18 +7,15 @@ type Collector struct {
 	totalLikes     *prometheus.Desc
 	totalFollowers *prometheus.Desc
 	totalFollowing *prometheus.Desc
+	twitter        *TwitterProfile
 }
 
 func NewCollector(profile *TwitterProfile) *Collector {
 	c := &Collector{
+		twitter: profile,
 		totalTweets: prometheus.NewDesc(
 			"tweets_total",
 			"Total tweets for user",
-			nil,
-			nil),
-		totalLikes: prometheus.NewDesc(
-			"likes_total",
-			"Total likes for user",
 			nil,
 			nil),
 		totalFollowers: prometheus.NewDesc(
@@ -31,6 +28,11 @@ func NewCollector(profile *TwitterProfile) *Collector {
 			"Total following for user",
 			nil,
 			nil),
+		totalLikes: prometheus.NewDesc(
+			"likes_total",
+			"Total likes for user",
+			nil,
+			nil),
 	}
 
 	return c
@@ -38,17 +40,19 @@ func NewCollector(profile *TwitterProfile) *Collector {
 
 func (c *Collector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- c.totalTweets
-	ch <- c.totalLikes
 	ch <- c.totalFollowers
 	ch <- c.totalFollowing
+	ch <- c.totalLikes
 }
 
 func (c *Collector) Collect(ch chan<- prometheus.Metric) {
+	if user, err := c.twitter.FetchUser(); err == nil {
+		ch <- prometheus.MustNewConstMetric(c.totalTweets, prometheus.GaugeValue, float64(user.StatusesCount))
+		ch <- prometheus.MustNewConstMetric(c.totalFollowers, prometheus.GaugeValue, float64(user.FollowersCount))
+		ch <- prometheus.MustNewConstMetric(c.totalFollowing, prometheus.GaugeValue, float64(user.FriendsCount))
+	}
 
-	//TODO: Get twitter from collector data here
-
-	ch <- prometheus.MustNewConstMetric(c.totalTweets, prometheus.GaugeValue, 1)
-	ch <- prometheus.MustNewConstMetric(c.totalLikes, prometheus.GaugeValue, 1)
-	ch <- prometheus.MustNewConstMetric(c.totalFollowers, prometheus.GaugeValue, 1)
-	ch <- prometheus.MustNewConstMetric(c.totalFollowing, prometheus.GaugeValue, 1)
+	if likes, err := c.twitter.totalLikes(); err == nil {
+		ch <- prometheus.MustNewConstMetric(c.totalLikes, prometheus.GaugeValue, float64(likes))
+	}
 }
