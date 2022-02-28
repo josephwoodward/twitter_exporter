@@ -1,10 +1,8 @@
 package exporter
 
 import (
-	"fmt"
 	"github.com/dghubble/go-twitter/twitter"
 	"net/http"
-	"time"
 )
 
 type TwitterProfile struct {
@@ -19,27 +17,25 @@ func NewTwitterProfile(twitterHandle string, client *http.Client) *TwitterProfil
 	}
 }
 
-func (p *TwitterProfile) Poll() {
-	ticker := time.NewTicker(5 * time.Second)
-	done := make(chan bool)
-
-	go func() {
-		for {
-			select {
-			case <-done:
-				return
-			case t := <-ticker.C:
-
-				//if user, err := p.fetchUser(); err == nil {
-				//
-				//}
-				//if timeline, err := p.fetchTimeline(); err == nil {
-
-				fmt.Println("Tick at", t)
-			}
-		}
-	}()
-}
+////TODO: Switch to polling to reduce unnecessary calls to Twitter
+//func (p *TwitterProfile) Poll() {
+//	ticker := time.NewTicker(5 * time.Second)
+//	done := make(chan bool)
+//
+//	go func() {
+//		for {
+//			select {
+//			case <-done:
+//				return
+//			case t := <-ticker.C:
+//				//if user, err := p.fetchUser(); err == nil {
+//				//}
+//				//if timeline, err := p.fetchTimeline(); err == nil {
+//				//}
+//			}
+//		}
+//	}()
+//}
 
 func (p *TwitterProfile) fetchTimeline() (*timelineData, error) {
 	//yes := true

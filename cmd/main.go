@@ -35,7 +35,6 @@ func main() {
 	token := oauth1.NewToken(accessToken, accessSecret)
 
 	profile = exporter.NewTwitterProfile(*user, config.Client(oauth1.NoContext, token))
-	profile.Poll()
 
 	collector := exporter.NewCollector(profile)
 	prometheus.MustRegister(collector)
