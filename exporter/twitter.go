@@ -1,8 +1,10 @@
 package exporter
 
 import (
+	"fmt"
 	"github.com/dghubble/go-twitter/twitter"
 	"net/http"
+	"time"
 )
 
 type TwitterProfile struct {
@@ -10,40 +12,72 @@ type TwitterProfile struct {
 	client     twitter.Client
 }
 
-func NewProfile(twitterHandle string, client *http.Client) *TwitterProfile {
+func NewTwitterProfile(twitterHandle string, client *http.Client) *TwitterProfile {
 	return &TwitterProfile{
 		client:     *twitter.NewClient(client),
 		ScreenName: twitterHandle,
 	}
 }
 
-func (p *TwitterProfile) totalLikes() (int, error) {
-	yes := true
+func (p *TwitterProfile) Poll() {
+	ticker := time.NewTicker(5 * time.Second)
+	done := make(chan bool)
+
+	go func() {
+		for {
+			select {
+			case <-done:
+				return
+			case t := <-ticker.C:
+
+				//if user, err := p.fetchUser(); err == nil {
+				//
+				//}
+				//if timeline, err := p.fetchTimeline(); err == nil {
+
+				fmt.Println("Tick at", t)
+			}
+		}
+	}()
+}
+
+func (p *TwitterProfile) fetchTimeline() (*timelineData, error) {
+	//yes := true
 	no := false
 
 	tweets, _, err := p.client.Timelines.UserTimeline(&twitter.UserTimelineParams{
 		ScreenName:      p.ScreenName,
-		Count:           100,
-		ExcludeReplies:  &yes,
+		Count:           50,
+		ExcludeReplies:  &no,
 		IncludeRetweets: &no,
 	})
 
 	if err != nil {
-		return -1, nil
+		return nil, err
 	}
 
-	var totalLikes int
+	t := &timelineData{}
 	for _, v := range tweets {
-		totalLikes += v.FavoriteCount
+		if !v.Retweeted {
+			t.totalLikes += v.FavoriteCount
+			t.totalRetweets += v.RetweetCount
+			t.totalReplies += v.ReplyCount
+		}
 	}
 
-	return totalLikes, nil
+	return t, nil
 }
 
-func (p *TwitterProfile) FetchUser() (*twitter.User, error) {
+func (p *TwitterProfile) fetchUser() (*twitter.User, error) {
 	user, _, err := p.client.Users.Show(&twitter.UserShowParams{
 		ScreenName: p.ScreenName,
 	})
 
 	return user, err
+}
+
+type timelineData struct {
+	totalLikes    int
+	totalRetweets int
+	totalReplies  int
 }
