@@ -1,6 +1,30 @@
 package exporter
 
-import "github.com/prometheus/client_golang/prometheus"
+import (
+	"github.com/prometheus/client_golang/prometheus"
+)
+
+var (
+	DefaultListenPort    = 8081
+	DefaultListenAddress = "0.0.0.0"
+	DefaultScrapePath    = "/metrics"
+)
+
+type TwitterExporterOptions struct {
+	ListenAddress string
+	ListenPort    int
+	ScrapePath    string
+}
+
+func GetDefaultExporterOptions() *TwitterExporterOptions {
+	opts := &TwitterExporterOptions{
+		ListenAddress: DefaultListenAddress,
+		ListenPort:    DefaultListenPort,
+		ScrapePath:    DefaultScrapePath,
+	}
+
+	return opts
+}
 
 type Collector struct {
 	twitter        *TwitterProfile

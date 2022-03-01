@@ -1,4 +1,4 @@
-module TwitterPrometheusExporter
+module twitterexporter
 
 go 1.17
 
