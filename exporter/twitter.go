@@ -19,9 +19,7 @@ func NewTwitterProfile(twitterHandle string, client *http.Client) *TwitterProfil
 }
 
 func (p *TwitterProfile) fetchTimeline() (*timelineData, error) {
-	//yes := true
 	no := false
-
 	tweets, _, err := p.client.Timelines.UserTimeline(&twitter.UserTimelineParams{
 		ScreenName:      p.ScreenName,
 		Count:           50,
@@ -35,6 +33,7 @@ func (p *TwitterProfile) fetchTimeline() (*timelineData, error) {
 
 	t := &timelineData{}
 	for _, v := range tweets {
+		// Ensure we don't include retweet
 		if !v.Retweeted {
 			t.totalLikes += v.FavoriteCount
 			t.totalRetweets += v.RetweetCount
