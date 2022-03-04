@@ -18,11 +18,11 @@ func NewTwitterProfile(twitterHandle string, client *http.Client) *TwitterProfil
 	}
 }
 
-func (p *TwitterProfile) fetchTimeline() (*timelineData, error) {
+func (p *TwitterProfile) fetchTimeline(count int) (*timelineData, error) {
 	no := false
 	tweets, _, err := p.client.Timelines.UserTimeline(&twitter.UserTimelineParams{
 		ScreenName:      p.ScreenName,
-		Count:           50,
+		Count:           count,
 		ExcludeReplies:  &no,
 		IncludeRetweets: &no,
 	})

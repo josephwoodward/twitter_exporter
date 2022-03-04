@@ -32,6 +32,8 @@ func main() {
 
 	flag.StringVar(&opts.Username, "user", "", "Twitter account name")
 	flag.StringVar(&opts.Username, "u", "", "Twitter account name")
+	flag.IntVar(&opts.MaxTweets, "tweets", exporter.DefaultMaxTweets, "Max tweets to fetch from API.")
+	flag.IntVar(&opts.MaxTweets, "t", exporter.DefaultMaxTweets, "Max tweets to fetch from API.")
 
 	flag.Parse()
 
@@ -61,7 +63,7 @@ func run(opts *exporter.TwitterExporterOptions) error {
 	token := oauth1.NewToken(accessToken, accessSecret)
 	profile := exporter.NewTwitterProfile(opts.Username, config.Client(oauth1.NoContext, token))
 
-	collector := exporter.NewCollector(profile)
+	collector := exporter.NewCollector(profile, opts.MaxTweets)
 	prometheus.MustRegister(collector)
 
 	// Start the exporter
