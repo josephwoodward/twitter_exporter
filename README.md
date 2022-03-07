@@ -22,7 +22,7 @@ export TWITTER_CONSUMER_SECRET="..."
 Then run the exporter, for instance:
 
 ```bashm
-twitter_prometheus_exporter -user=BillGates
+twitter_prometheus_exporter -u=example
 ```
 
 ## Exported metrics
@@ -30,16 +30,22 @@ twitter_prometheus_exporter -user=BillGates
 The exporter provides a set of counters that can be used to determine how frequently keywords are
 being used.
 
-| Metric | Notes |
-| ------ | ----- |
-|twitter_user_followers_total | The total number of followers the user has. |
-|twitter_user_following_total | The total number of users the user is following |
-|twitter_user_tweets_total | Total number of tweets |
+| Metric | Notes                                                 |
+| ------ |-------------------------------------------------------|
+|twitter_profile_followers_total | The total number of followers of the profile.         |
+|twitter_profile_following_total | The total number of accounts the profile is following |
+|twitter_profile_tweets_total | Total number of tweets                                |
+|twitter_timeline_likes_total | Total number of likes across the last n tweets        |
+|twitter_timeline_replies_total | Total number of replies across the last n tweets      |
+|twitter_timeline_retweets_total | Total number of retweets across the last n tweets     |
 
-A full sample of output can be found below.
+A full sample of output can be found below:
 
 ```
-twitter_user_followers_total{profile="BillGates"} 1479
-twitter_user_following_total{profile="BillGates"} 639
-twitter_user_tweets_total{profile="BillGates"} 11561
+twitter_profile_followers_total{username="example"} 1885
+twitter_profile_following_total{username="example"} 857
+twitter_profile_tweets_total{username="example"} 13935
+twitter_timeline_likes_total{username="example"} 108
+twitter_timeline_replies_total{username="example"} 8
+twitter_timeline_retweets_total{username="example"} 7
 ```
