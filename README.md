@@ -22,7 +22,7 @@ export TWITTER_CONSUMER_SECRET="..."
 Then run the exporter, for instance:
 
 ```bashm
-twitter_prometheus_exporter -u=example
+twitter_prometheus_exporter -u=example_user
 ```
 
 ## Exported metrics
@@ -42,10 +42,10 @@ being used.
 A full sample of output can be found below:
 
 ```
-twitter_profile_followers_total{username="example"} 1885
-twitter_profile_following_total{username="example"} 857
-twitter_profile_tweets_total{username="example"} 13935
-twitter_timeline_likes_total{username="example"} 108
-twitter_timeline_replies_total{username="example"} 8
-twitter_timeline_retweets_total{username="example"} 7
+titter_profile_followers_total{username="example_user"} 1885
+twitter_profile_following_total{username="example_user"} 857
+twitter_profile_tweets_total{username="example_user"} 13935
+twitter_timeline_likes_total{username="example_user"} 108
+twitter_timeline_replies_total{username="example_user"} 8
+twitter_timeline_retweets_total{username="example_user"} 7
 ```
