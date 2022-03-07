@@ -30,7 +30,7 @@ func main() {
 	flag.IntVar(&opts.ListenPort, "p", exporter.DefaultListenPort, "Port to listen on.")
 	flag.StringVar(&opts.MetricsPath, "path", exporter.DefaultScrapePath, "URL path from which to serve scrapes.")
 
-	flag.StringVar(&opts.Username, "user", "", "Twitter account name")
+	flag.StringVar(&opts.Username, "username", "", "Twitter account name")
 	flag.StringVar(&opts.Username, "u", "", "Twitter account name")
 	flag.IntVar(&opts.MaxTweets, "tweets", exporter.DefaultMaxTweets, "Max tweets to fetch from API.")
 	flag.IntVar(&opts.MaxTweets, "t", exporter.DefaultMaxTweets, "Max tweets to fetch from API.")
