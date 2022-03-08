@@ -17,3 +17,7 @@
 # IDE
 .vscode
 .idea
+
+# Others
+*.sh
+
